@@ -6,11 +6,11 @@ public class User {
     private UUID userUUid;
     private final String firstName;
     private final String lastName;
-    private final Gender gender ;
+    private final Gender gender;
     private final Integer age;
     private final String email;
-    public enum Gender
-    {
+
+    public enum Gender {
         MALE, FEMALE
     }
 
@@ -26,6 +26,7 @@ public class User {
     public UUID getUserUUid() {
         return userUUid;
     }
+
     public void setUserUUid(UUID userUUid) {
         this.userUUid = userUUid;
     }

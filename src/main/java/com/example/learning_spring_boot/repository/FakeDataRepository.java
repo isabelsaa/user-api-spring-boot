@@ -17,14 +17,13 @@ public class FakeDataRepository implements UserRepository {
     }
 
 
-
     @Override
     public List<User> selectAllUsers() {
         return new ArrayList<>(database.values());
     }
 
     @Override
-    public Optional <User> selectUserByUuid(UUID userUUid) {
+    public Optional<User> selectUserByUuid(UUID userUUid) {
 
         return Optional.ofNullable(database.get(userUUid));
     }
