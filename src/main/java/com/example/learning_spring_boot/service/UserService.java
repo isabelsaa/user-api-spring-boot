@@ -4,7 +4,9 @@ import com.example.learning_spring_boot.repository.UserRepository;
 import com.example.learning_spring_boot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,7 +20,7 @@ public class UserService {
     public UserService(UserRepository userDao) {
         this.userDao = userDao;
     }
-    
+
     public List<User> getAllUsers(Optional<String> gender) {
         List<User> users = userDao.selectAllUsers();
         if (gender.isEmpty()) {
@@ -57,6 +59,15 @@ public class UserService {
     public int insertUser(User user) {
         UUID userUUid = UUID.randomUUID();
         user.setUserUUid(userUUid);
+        validateUser(user);
         return userDao.insertUser(userUUid, user);
+    }
+
+    private static void validateUser(User user) {
+        Objects.requireNonNull(user.getFirstName(), "First name required");
+        Objects.requireNonNull(user.getLastName(), "Last name required");
+        Objects.requireNonNull(user.getAge(), "Age required");
+        Objects.requireNonNull(user.getEmail(), "Email required");
+        Objects.requireNonNull(user.getGender(), "Gender required");
     }
 }
