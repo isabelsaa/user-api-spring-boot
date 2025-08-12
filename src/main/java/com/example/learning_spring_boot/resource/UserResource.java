@@ -2,17 +2,20 @@ package com.example.learning_spring_boot.resource;
 
 import com.example.learning_spring_boot.model.User;
 import com.example.learning_spring_boot.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.QueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping(path = "/api/v1/users")
 public class UserResource {
@@ -45,9 +48,13 @@ public class UserResource {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Integer> insertNewUser(@RequestBody User user) {
+    public ResponseEntity<Integer> insertNewUser(@RequestBody @Valid User user) {
         int result = userService.insertUser(user);
-        return getIntegerResponseEntity(result);
+        URI location = URI.create("/api/v1/users/" + user.getUserUUid());
+
+        return (result > 0)
+                ? ResponseEntity.created(location).build()
+                : ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(method = RequestMethod.PUT,
@@ -56,22 +63,21 @@ public class UserResource {
     )
     public ResponseEntity<Integer> updateNewUser(@RequestBody User user) {
         int result = userService.updateUser(user);
-        return getIntegerResponseEntity(result);
+
+        return (result > 0)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
             path = "{userUuid}"
     )
-    public ResponseEntity<Integer> deleteUser(@PathVariable("userUuid") UUID userUuid) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("userUuid") UUID userUuid) {
         int result = userService.removeUser(userUuid);
-        return getIntegerResponseEntity(result);
-    }
 
-    private static ResponseEntity<Integer> getIntegerResponseEntity(int result) {
-        if (result > 0) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        return (result > 0)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 
     record ErrorMessage(String message) {
