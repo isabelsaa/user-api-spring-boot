@@ -1,13 +1,25 @@
 package com.example.learning_spring_boot.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public class User {
     private UUID userUUid;
+    @NotNull
     private final String firstName;
+    @NotNull
     private final String lastName;
+    @NotNull
     private final Gender gender;
+    @NotNull
+    @Min(value = 0)
+    @Max(value = 112)
     private final Integer age;
+    @NotNull
+    @Email
     private final String email;
 
     public enum Gender {
